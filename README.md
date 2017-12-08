@@ -1,0 +1,2 @@
+# question_solution_generator
+This algorithm is intended to be used at a teaching aid. It operates by using a set of equations to create questions and the associated solutions. The algorithm was tested at the University of the West Indies in the DC Machine section of the level 2 course entitled Electromechanical Energy Conversions. It was implemented in Python and presented on a webpage using the Flask web development platform. 
