@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>emech</title>
+<!-- Bootstrap core CSS -->
+<link href="{{ url_for ('static', filename = 'css/bootstrap.min.css')}}" rel="stylesheet">
+
+<link href="{{ url_for ('static', filename = 'css/bootstrap-toggle.min.css')}}" rel="stylesheet">
+
+<link href="{{ url_for ('static', filename = 'css/main.css')}}" rel="stylesheet">
+
+{%block styles%}
+{%endblock%}
+
+</head>
+<body>
+<div class="container">
+
+    <h1 class="text-center">Hello, Ravi.</h1>
+
+<hr>
+<!-- <img  class="img-responsive" src="/static/img/dcgenerator1.svg" /> -->
+
+<form action="javascript: this.preventDefault" id="questionForm">
+     
+        <div class="form-group">
+          <label for="sel1">Question Type</label>
+          <select class="form-control" id="sel1">
+            <option value="dcmotor">DC Motor</option>
+            <option value="dcgenerator">DC Generator</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="sel2">Difficulty</label>
+          <select class="form-control" id="sel2">
+            <option value="easy">Newborn</option>
+            <option value="moderate">Infant</option>
+            <option value="difficult">Toddler</option>
+          </select>
+        </div>
+
+        <div class="text-center">
+        <button type="submit" class="btn btn-default" id="getquestion">Get Question</button>
+        </div>
+      </form>
+
+<hr>
+<div id="qs" style="display: none;">
+<div id="question">
+    babies are building your question...
+</div>
+
+
+<div class="text-center">
+    <br>
+<button class="btn btn-default" id="showsolution" style="display: none;">Show Solution</button>
+</div>
+
+<br>
+<div id="solution" style="display: none;"></div></div>
+
+<!-- <p>
+    When $a \ne 0$, there are two solutions to \(ax^2 + bx + c = 0\) and they are
+$$x = {-b \pm \sqrt{b^2-4ac} \over 2a}.$$
+</p> -->
+
+    {%block body%}
+
+    {%endblock%}
+
+</div>
+
+
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="{{ url_for ('static', filename = 'js/jquery.min.js')}}"></script>
+    <script src="{{ url_for ('static', filename = 'js/bootstrap.min.js')}}"></script>
+    <script src="{{ url_for ('static', filename = 'js/bootstrap-toggle.min.js')}}"></script>
+    <script src="{{ url_for ('static', filename = 'js/jquery.validate.js')}}"></script>
+
+
+    <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+</script>
+
+<script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+<script type="text/javascript">
+    $( document ).ready(function() {
+
+        $('#showsolution').on('click', function(){
+
+            $("#solution").fadeToggle(300)
+
+            if ($("#showsolution").text() == "Show Solution") {
+                $("#showsolution").text("Hide Solution");
+            } else {
+                $("#showsolution").text("Show Solution")
+            }
+            
+
+        });
+
+        
+        $('#getquestion').on('click', function(){
+
+            $("#solution").css("display", "none")
+            $("#showsolution").text("Show Solution");
+
+
+          type = $('#sel1').val()
+          difficulty = $('#sel2').val()
+
+          console.log(type)
+          console.log(difficulty)
+          $("#qs").removeAttr("style")
+          $("#question").html("babies are building your question...")
+          $("#showsolution").css("display", "none")
+          // password = questionForm.find('input[name="password"]').val();
+
+          $.ajax({
+            data: {
+                type: type,
+                difficulty: difficulty
+            },
+            type: 'POST',
+            url: '/_get_qs',
+            success: function(data){
+                if (data.status == true){
+                  console.log('success')
+                  $("#showsolution").removeAttr("style")
+
+                  $("#question").html(jQuery.parseHTML(data.question))
+
+                  $("#solution").html(jQuery.parseHTML("<hr>"+data.solution))
+                  MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+ 
+                }
+                else{
+                
+                  console.log('fail')
+                  $("#question").html("babies have died...:(")
+                  $("#showsolution").css("display", "none")
+             
+                }
+            }
+        });
+      });
+    });
+
+
+    </script>
+    
+
+    {%block js%}
+    {%endblock%}
+
+
+
+    
+
+  </body>
+</html>
